@@ -1,5 +1,5 @@
 {
-  "rewrites": [
-    {"source": "/(.*)", "destination": "https://8.8.4.4/dns-query"}
+  "routers": [
+    {"source": "/(.*)", "destination": "https://dns.google/dns-query"}
   ]
 }
