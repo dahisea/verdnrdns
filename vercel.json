@@ -1,5 +1,8 @@
 {
-  "routers": [
-    {"source": "/(.*)", "destination": "https://dns.google/dns-query"}
+  "rewrites": [
+    {
+      "source": "/:match*",
+      "destination": "https://dns.google/:match*"
+    }
   ]
 }
