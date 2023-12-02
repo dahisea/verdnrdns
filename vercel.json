@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://private.canadianshield.cira.ca/dns-query"
+      "destination": "https://dns.quad9.net/dns-query"
     }
   ]
 }
