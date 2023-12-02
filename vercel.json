@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://dns11.quad9.net/dns-query"
+      "destination": "https://doh-jp.blahdns.com/dns-query"
     }
   ]
 }
