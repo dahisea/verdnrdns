@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://doh-jp.blahdns.com/dns-query"
+      "destination": "https://dns.nextdns.io"
     }
   ]
 }
