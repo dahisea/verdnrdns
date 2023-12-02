@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://101.101.101.101/dns-query"
+      "destination": "https://doh.opendns.com/dns-query"
     }
   ]
 }
