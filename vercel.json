@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://dns.switch.ch/dns-query"
+      "destination": "https://odvr.nic.cz/doh"
     }
   ]
 }
