@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://dns.nextdns.io"
+      "destination": "https://dns.switch.ch/dns-query"
     }
   ]
 }
