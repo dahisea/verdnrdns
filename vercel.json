@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://dns.alidns.com/dns-query"
+      "destination": "https://doh.pub/dns-query"
     }
   ]
 }
