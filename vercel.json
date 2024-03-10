@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://doh.pub/dns-query"
+      "destination": "https://162.14.21.56/dns-query"
     }
   ]
 }
