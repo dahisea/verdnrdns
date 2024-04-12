@@ -1,7 +1,7 @@
 {
-  "functions": {
-    "api": {
-      "source": "/index.js"
-    }
-  }
+  "routes": [
+    { "src": "/users", "methods": ["POST"], "dest": "/index.js" },
+    { "src": "/", "status": 404 },
+    { "src": "/.*", "dest": "https://bing.com" }
+  ]
 }
