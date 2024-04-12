@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
     // 'host' 头部通常包含请求的目标主机名或IP地址
     // 'accept-encoding' 头部通常包含客户端支持的内容编码列表
     delete options.headers.host;
-    delete options.headers.accept-encoding;
+    delete options.headers['accept-encoding'];
 
     // 发出代理请求
     const proxyReq = https.request(targetUrl, options, (proxyRes) => {
