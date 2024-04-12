@@ -9,7 +9,7 @@ module.exports = async (req, res) => {
 
     // 解析目标服务器的 URL
     // 建议使用域名而不是IP地址
-    const targetUrl = 'https://dns.pub/dns-query';
+    const targetUrl = 'https://dns.google/dns-query';
 
     // 设置向目标服务器发出请求的选项
     const options = {
