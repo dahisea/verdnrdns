@@ -5,7 +5,7 @@ const https = require('https');
 module.exports = async (req, res) => {
   try {
     // 提取原始请求的相关信息
-    const { method, url, headers } = req;
+    const { method, headers } = req;
 
     // 解析目标服务器的 URL
     // 建议使用域名而不是IP地址
@@ -16,12 +16,16 @@ module.exports = async (req, res) => {
       method,
       headers: {
         ...headers,
-        // 确保删除敏感的头部信息
-        'X-Forwarded-For': req.headers['x-real-ip'] || req.headers['x-forwarded-for'], // 使用真实的客户端IP地址
+        // 从原始请求中获取客户端的真实IP地址
+        // 'x-real-ip' 通常由代理服务器设置，包含原始请求的IP地址
+        // 如果 'x-real-ip' 不存在，则尝试使用 'x-forwarded-for' 头部
+        'X-Forwarded-For': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || '',
       },
     };
 
     // 删除可能会泄露敏感信息或导致目标服务器拒绝请求的头部
+    // 'host' 头部通常包含请求的目标主机名或IP地址
+    // 'accept-encoding' 头部通常包含客户端支持的内容编码列表
     delete options.headers.host;
     delete options.headers['accept-encoding'];
 
