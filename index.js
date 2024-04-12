@@ -16,9 +16,7 @@ module.exports = async (req, res) => {
       method,
       headers: {
         ...headers,
-        'x-real-ip': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || '',
-        'x-forwarded-for': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || '',
-        'true-client-ip': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || ''
+        'x-forwarded-for': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-real-ip'] || headers['x-forwarded-for'] || ''
       },
     };
 
