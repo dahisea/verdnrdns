@@ -11,14 +11,11 @@ module.exports = async (req, res) => {
     const { method, url, headers } = req;
 
     // 解析目标服务器的 URL
-    const targetUrl = 'https://doh.pub/dns-query';
-    const { hostname, pathname } = new URL(targetUrl);
+    const targetUrl = 'https://162.14.21.56/dns-query';
 
     // 设置向目标服务器发出请求的选项
     const options = {
       method,
-      hostname,
-      path: pathname,
       headers: {
         ...headers,
         'X-Forwarded-For': clientSubnetIP, // 将 X-Forwarded-For 头部设置为客户端子网 IP 地址
@@ -26,22 +23,15 @@ module.exports = async (req, res) => {
     };
 
     // 发出代理请求
-    const proxyReq = https.request(options, (proxyRes) => {
-      // 将目标服务器的响应转发回客户端
-      res.writeHead(proxyRes.statusCode, proxyRes.headers);
-      proxyRes.pipe(res); // 将代理服务器的响应数据流传递回客户端
-    });
-
-    // 捕获代理请求错误
-    proxyReq.on('error', (err) => {
-      console.error('Proxy request error:', err);
-      res.status(500).send('Proxy request failed');
+    const proxyReq = https.request(targetUrl, options, (proxyRes) => {
+      // 直接将源服务器的响应转发回客户端
+      proxyRes.pipe(res);
     });
 
     // 将原始请求正文传递给代理请求（如果有的话）
     req.pipe(proxyReq);
 
-    // 结束响应
+    // 结束代理请求
     req.on('end', () => {
       proxyReq.end();
     });
