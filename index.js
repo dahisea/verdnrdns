@@ -16,10 +16,9 @@ module.exports = async (req, res) => {
       method,
       headers: {
         ...headers,
-        // 如果 'x-real-ip' 不存在，则尝试使用 'x-forwarded-for' 头部
+        'x-real-ip': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || '',
         'x-forwarded-for': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || '',
-        'x-real-ip': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || '',,
-        'true-client-ip': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || '',
+        'true-client-ip': headers['cf-connecting-ip'] || headers['true-client-ip'] || headers['x-forwarded-for'] || headers['x-real-ip'] || ''
       },
     };
 
