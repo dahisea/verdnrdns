@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
     const { method, url, headers } = req;
 
     // 解析目标服务器的 URL
-    const targetUrl = 'https://162.14.21.56/dns-query';
+    const targetUrl = 'https://doh.pub/dns-query';
     const { hostname, pathname } = new URL(targetUrl);
 
     // 设置向目标服务器发出请求的选项
