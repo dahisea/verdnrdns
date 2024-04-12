@@ -6,4 +6,13 @@
       "use": "@vercel/node"
     }
   ]
+}{
+  "routes": [
+    { "src": "/dns-query", "dest": "/index.js" },
+    {
+      "src": "/(.*)",
+      "status": 302,
+      "headers": { "Location": "https://dahi.icu/" }
+    }
+  ]
 }
