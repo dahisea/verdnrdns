@@ -8,45 +8,51 @@ module.exports = async (req, res) => {
     const { method, headers } = req;
 
     // 解析目标服务器的 URL
-    // 建议使用域名而不是IP地址
     const targetUrl = 'https://dns.google/dns-query';
 
-    // 设置向目标服务器发出请求的选项
+    // 构建向目标服务器发出请求的选项
     const options = {
-      method,
+      method: 'POST', // 使用 POST 方法发送 DNS 查询
       headers: {
         ...headers,
+        'accept': 'application/dns-json',
+        'content-type': 'application/json',
         'x-forwarded-for': headers['cf-connecting-ip'] || headers['true-client-ip'] || '',
-        'x-real-ip': headers['cf-connecting-ip'] || headers['true-client-ip'] || ''
-      },
+        'x-real-ip': headers['cf-connecting-ip'] || headers['true-client-ip'] || '',
+        'x-subnet': '59.172.89.64/32'
+      }
     };
 
     // 删除可能会泄露敏感信息或导致目标服务器拒绝请求的头部
-    // 'host' 头部通常包含请求的目标主机名或IP地址
-    // 'accept-encoding' 头部通常包含客户端支持的内容编码列表
     delete options.headers.host;
     delete options.headers['accept-encoding'];
 
-    // 发出代理请求
-    const proxyReq = https.request(targetUrl, options, (proxyRes) => {
-      // 设置响应头部
-      res.writeHead(proxyRes.statusCode, proxyRes.headers);
-
-      // 直接将源服务器的响应转发回客户端
-      proxyRes.pipe(res);
+    // 从原始请求中读取 DNS 查询内容
+    let requestData = [];
+    req.on('data', chunk => {
+      requestData.push(chunk);
     });
 
-    // 处理请求错误
-    proxyReq.on('error', (e) => {
-      console.error('Proxy request error:', e);
-      res.status(500).send('Proxy request failed');
-    });
-
-    // 将原始请求正文传递给代理请求（如果有的话）
-    req.pipe(proxyReq);
-
-    // 结束代理请求
     req.on('end', () => {
+      requestData = Buffer.concat(requestData);
+      
+      // 发出代理请求
+      const proxyReq = https.request(targetUrl, options, (proxyRes) => {
+        // 设置响应头部
+        res.writeHead(proxyRes.statusCode, proxyRes.headers);
+
+        // 将 DNS 响应直接传递给客户端响应
+        proxyRes.pipe(res);
+      });
+
+      // 处理代理请求错误
+      proxyReq.on('error', (e) => {
+        console.error('Proxy request error:', e);
+        res.status(500).send('Proxy request failed');
+      });
+
+      // 将原始请求正文传递给代理请求
+      proxyReq.write(requestData);
       proxyReq.end();
     });
   } catch (error) {
