@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
       headers: {
         ...headers,
         'accept': 'application/dns-json',
-        'content-type': 'application/json',
+        'content-type': 'application/dns-json',
         'x-forwarded-for': headers['cf-connecting-ip'] || headers['true-client-ip'] || '',
         'x-real-ip': headers['cf-connecting-ip'] || headers['true-client-ip'] || '',
         'x-subnet': '59.172.89.64/32'
