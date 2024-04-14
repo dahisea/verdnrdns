@@ -20,8 +20,8 @@ module.exports = async (req, res) => {
         // 修改 EDNS 扩展中的 edns_client_subnet 选项为固定值 59.172.89.64
         modifyEDNSClientSubnet(dnsMessage, '59.172.89.64');
 
-        // 重新打包修改后的 DNS 查询数据
-        const modifiedRequestData = buildDNSMessage(dnsMessage);
+        // 构建修改后的 DNS 查询数据
+        const modifiedRequestData = buildModifiedDNSMessage(dnsMessage);
 
         const options = {
           method: 'POST',
@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
 
         const proxyReq = https.request(targetUrl, options, (proxyRes) => {
           res.writeHead(proxyRes.statusCode, proxyRes.headers);
-          proxyRes.pipe(res);
+          proxyRes.pipe(res); // 将目标服务器的响应直接传递给客户端
         });
 
         proxyReq.on('error', (e) => {
@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
           res.status(500).send('Proxy request failed');
         });
 
-        // 发送修改后的 DNS 查询数据
+        // 发送修改后的 DNS 查询数据到目标服务器
         proxyReq.write(modifiedRequestData);
         proxyReq.end();
       } catch (error) {
@@ -59,16 +59,11 @@ module.exports = async (req, res) => {
 };
 
 function parseDNSMessage(requestData) {
-  // 解析 DNS 查询数据，根据 DNS 消息格式提取 EDNS 扩展
-  // 这里需要根据具体的 DNS 消息格式来实现解析逻辑
-  // 假设 DNS 消息格式为简化版的示例，实际需根据具体情况进行实现
-  const dnsMessage = {
-    header: requestData.slice(0, 12),
-    question: requestData.slice(12), // 假设问题部分从第 12 字节开始
-    edns: requestData.slice(20) // 假设 EDNS 选项部分从第 20 字节开始
-  };
+  // 解析 DNS 查询数据，提取 DNS 消息的头部和问题部分
+  const header = requestData.slice(0, 12);
+  const question = requestData.slice(12);
 
-  return dnsMessage;
+  return { header, question };
 }
 
 function modifyEDNSClientSubnet(dnsMessage, newSubnetIP) {
@@ -77,18 +72,25 @@ function modifyEDNSClientSubnet(dnsMessage, newSubnetIP) {
   // 这里需要根据具体的 EDNS 扩展格式和选项位置进行修改
 
   // 假设 edns_client_subnet 选项在 EDNS 选项部分的第一个字节，长度为 8 字节
-  dnsMessage.edns.write(newSubnetIP, 0, 4, 'ascii'); // 写入新的子网 IP
+  const ednsClientSubnetOption = Buffer.alloc(8);
+  ednsClientSubnetOption.writeUInt16BE(8, 0); // Option Code: 8
+  ednsClientSubnetOption.writeUInt16BE(4, 2); // Option Length: 4
+  const subnetBytes = newSubnetIP.split('.').map(Number);
+  ednsClientSubnetOption.writeUInt8(subnetBytes[0], 4); // Subnet IP Byte 1
+  ednsClientSubnetOption.writeUInt8(subnetBytes[1], 5); // Subnet IP Byte 2
+  ednsClientSubnetOption.writeUInt8(subnetBytes[2], 6); // Subnet IP Byte 3
+  ednsClientSubnetOption.writeUInt8(subnetBytes[3], 7); // Subnet IP Byte 4
 
-  // 如果子网 IP 长度固定为 4 字节，可以直接写入新 IP 地址
+  // 替换 EDNS 扩展部分中的 edns_client_subnet 选项
+  dnsMessage.edns = ednsClientSubnetOption;
 }
 
-function buildDNSMessage(dnsMessage) {
-  // 重新构建修改后的 DNS 查询数据
-  // 假设重新构建 DNS 消息的方法，将 header、question 和 edns 部分组合起来
+function buildModifiedDNSMessage(dnsMessage) {
+  // 构建修改后的 DNS 查询数据，将头部、问题部分和修改后的 EDNS 扩展组合成一个新的 DNS 消息
   const modifiedRequestData = Buffer.concat([
     dnsMessage.header,
     dnsMessage.question,
-    dnsMessage.edns
+    dnsMessage.edns // 这里假设 edns 已经在 modifyEDNSClientSubnet 函数中被修改
   ]);
 
   return modifiedRequestData;
