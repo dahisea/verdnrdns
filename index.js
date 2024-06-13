@@ -1,32 +1,54 @@
-// 导入必要的模块
 const https = require('https');
 
-// Vercel 函数处理程序
+// Helper function to add EDNS0 client subnet option
+function addEdnsClientSubnet(dnsQuery, subnet) {
+  // Convert the subnet (e.g., '59.172.89.64/32') to the appropriate DNS format
+  const [ip, prefixLength] = subnet.split('/');
+  const ipParts = ip.split('.').map(part => parseInt(part, 10));
+  
+  // EDNS(0) client subnet option format
+  const edns0Option = Buffer.from([
+    0x00, 0x08, // OPTION-CODE: CLIENT-SUBNET
+    0x00, 0x08, // OPTION-LENGTH: 8 bytes
+    0x00, 0x01, // FAMILY: IPv4
+    parseInt(prefixLength, 10), // SOURCE PREFIX-LENGTH
+    0x00,       // SCOPE PREFIX-LENGTH
+    ...ipParts  // ADDRESS
+  ]);
+
+  // EDNS(0) OPT pseudo-record
+  const optPseudoRecord = Buffer.concat([
+    Buffer.from([0x00]), // NAME: (root)
+    Buffer.from([0x00, 0x29]), // TYPE: OPT
+    Buffer.from([0x10, 0x00]), // CLASS: 4096
+    Buffer.from([0x00, 0x00, 0x00, 0x00]), // TTL: 0
+    Buffer.from([0x00, edns0Option.length]), // RDLENGTH
+    edns0Option // RDATA
+  ]);
+
+  // Append the OPT pseudo-record to the DNS query
+  return Buffer.concat([dnsQuery, optPseudoRecord]);
+}
+
+// Vercel function handler
 module.exports = async (req, res) => {
   try {
-    // 提取原始请求的相关信息
-    const { method, headers } = req;
-
-    // 解析目标服务器的 URL
     const targetUrl = 'https://dns.google/dns-query';
+    const subnet = '59.172.89.64/32';
 
-    // 构建向目标服务器发出请求的选项
     const options = {
-      method: 'POST', // 使用 POST 方法发送 DNS 查询
+      method: 'POST',
       headers: {
-        ...headers,
-        'accept': 'application/dns-message',
+        'Host': 'dns.google',
+        'Content-Type': 'application/dns-message',
+        'Accept': 'application/dns-message',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
         'x-forwarded-for': '59.172.89.64',
         'x-real-ip': '59.172.89.64',
         'x-subnet': '59.172.89.64/32'
       }
     };
 
-    // 删除可能会泄露敏感信息或导致目标服务器拒绝请求的头部
-    delete options.headers.host;
-    delete options.headers['accept-encoding'];
-
-    // 从原始请求中读取 DNS 查询内容
     let requestData = [];
     req.on('data', chunk => {
       requestData.push(chunk);
@@ -35,27 +57,24 @@ module.exports = async (req, res) => {
     req.on('end', () => {
       requestData = Buffer.concat(requestData);
       
-      // 发出代理请求
+      // Add EDNS0 client subnet option to the DNS query
+      const modifiedRequestData = addEdnsClientSubnet(requestData, subnet);
+      
       const proxyReq = https.request(targetUrl, options, (proxyRes) => {
-        // 设置响应头部
         res.writeHead(proxyRes.statusCode, proxyRes.headers);
-
-        // 将 DNS 响应直接传递给客户端响应
         proxyRes.pipe(res);
       });
 
-      // 处理代理请求错误
       proxyReq.on('error', (e) => {
         console.error('Proxy request error:', e);
-        res.status(500).send('Proxy request failed');
+        res.status(500).send(`Proxy request failed: ${e.message}`);
       });
 
-      // 将原始请求正文传递给代理请求
-      proxyReq.write(requestData);
+      proxyReq.write(modifiedRequestData);
       proxyReq.end();
     });
   } catch (error) {
     console.error('Function error:', error);
-    res.status(500).send('Function execution failed');
+    res.status(500).send(`Function execution failed: ${error.message}`);
   }
 };
