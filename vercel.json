@@ -1,8 +1,8 @@
 {
-  "routes": [
+  "rewrites": [
     {
-      "src": "*",
-      "dest": "https://dns.google/dns-query"
+      "source": "/(.*)",
+      "destination": "https://dns.google/dns-query"
     }
   ]
 }
