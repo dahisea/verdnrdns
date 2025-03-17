@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "https://223.6.6.6/dns-query"
+      "destination": "https://dns.hinet.net/dns-query"
     }
   ]
 }
