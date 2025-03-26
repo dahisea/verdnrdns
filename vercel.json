@@ -1,8 +1,40 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/dns-query",
       "destination": "https://223.6.6.6/dns-query"
+    },
+    {
+      "source": "/ali/dns-query",
+      "destination": "https://223.6.6.6/dns-query"
+    },
+    {
+      "source": "/google/dns-query",
+      "destination": "https://8.8.4.4/dns-query"
+    },
+    {
+      "source": "/tw/dns-query",
+      "destination": "https://101.101.101.101/dns-query"
+    },
+    {
+      "source": "/cf/dns-query",
+      "destination": "https://1.1.1.1/dns-query"
+    },
+    {
+      "source": "/sb/dns-query",
+      "destination": "https://dns.sb/dns-query"
+    },
+    {
+      "source": "/quad/dns-query",
+      "destination": "https://9.9.9.9/dns-query"
+    },
+    {
+      "source": "/adg/dns-query",
+      "destination": "https://dns.adguard.com/dns-query"
+    },
+    {
+      "source": "/tx/dns-query",
+      "destination": "https://doh.pub/dns-query"
     }
   ]
 }
