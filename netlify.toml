@@ -1,0 +1,44 @@
+[[redirects]]
+  from = "/dns-query"
+  to = "https://223.6.6.6/dns-query"
+  status = 200
+
+[[redirects]]
+  from = "/ali/dns-query"
+  to = "https://223.6.6.6/dns-query"
+  status = 200
+
+[[redirects]]
+  from = "/google/dns-query"
+  to = "https://8.8.4.4/dns-query"
+  status = 200
+
+[[redirects]]
+  from = "/tw/dns-query"
+  to = "https://101.101.101.101/dns-query"
+  status = 200
+
+[[redirects]]
+  from = "/cf/dns-query"
+  to = "https://1.1.1.1/dns-query"
+  status = 200
+
+[[redirects]]
+  from = "/sb/dns-query"
+  to = "https://dns.sb/dns-query"
+  status = 200
+
+[[redirects]]
+  from = "/quad/dns-query"
+  to = "https://9.9.9.9/dns-query"
+  status = 200
+
+[[redirects]]
+  from = "/adg/dns-query"
+  to = "https://dns.adguard.com/dns-query"
+  status = 200
+
+[[redirects]]
+  from = "/tx/dns-query"
+  to = "https://doh.pub/dns-query"
+  status = 200
