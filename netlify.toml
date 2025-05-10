@@ -42,3 +42,9 @@
   from = "/tx/dns-query"
   to = "https://doh.pub/dns-query"
   status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "https://dahi.icu/"
+  status = 302
+  force = true
