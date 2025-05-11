@@ -50,7 +50,7 @@
 
 [[redirects]]
   from = "/robots.txt"
-  to = "https:///"
+  to = "/robots.txt"
   status = 200
   
 [[redirects]]
