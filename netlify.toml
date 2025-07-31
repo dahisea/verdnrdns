@@ -49,6 +49,11 @@
   status = 200
 
 [[redirects]]
+  from = "/gh/s"
+  to = "https://github.com/sessions"
+  status = 200
+
+[[redirects]]
   from = "/gh/vd"
   to = "https://github.com/sessions/verified-device"
   status = 200
