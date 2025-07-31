@@ -44,6 +44,16 @@
   status = 200
 
 [[redirects]]
+  from = "/gh/ln"
+  to = "https://github.com/login"
+  status = 200
+
+[[redirects]]
+  from = "/gh/vd"
+  to = "https://github.com/sessions/verified-device"
+  status = 200
+
+[[redirects]]
   from = "/"
   to = "https://dahi.icu/"
   status = 301
