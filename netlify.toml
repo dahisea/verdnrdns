@@ -44,21 +44,6 @@
   status = 200
 
 [[redirects]]
-  from = "/gh/ln"
-  to = "https://github.com/login"
-  status = 200
-
-[[redirects]]
-  from = "/gh/s"
-  to = "https://github.com/sessions"
-  status = 200
-
-[[redirects]]
-  from = "/gh/vd"
-  to = "https://github.com/sessions/verified-device"
-  status = 200
-
-[[redirects]]
   from = "/"
   to = "https://dahi.icu/"
   status = 301
@@ -67,9 +52,3 @@
   from = "/robots.txt"
   to = "/robots.txt"
   status = 200
-  
-[[redirects]]
-  from = "/*"
-  to = "https://greasyfork.org/:splat"
-  status = 200
-  force = true
