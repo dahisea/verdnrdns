@@ -9,6 +9,11 @@
   status = 200
 
 [[redirects]]
+  from = "/e/dns-query"
+  to = "https://volcengine-cf-abtest.dahi.edu.eu.org/linuxdo/dns-query"
+  status = 200
+
+[[redirects]]
   from = "/google/dns-query"
   to = "https://8.8.4.4/dns-query"
   status = 200
